@@ -1,20 +1,53 @@
 const express = require("express");
 const router = express.Router();
+const Project = require("../models/Project")
 
-router.get("/", (req, res) => {
-    res.send("GET all projects is working")
+router.get("/", async (req, res) => {
+    try {
+        const getProjects = await Project.find()
+        res.json(getProjects)
+    } catch (err) {
+        res.json({ message: err })
+    }
 })
-router.get("/", (req, res) => {
-    res.send("GET a project is working")
+router.get("/:id", async (req, res) => {
+    try {
+        const oneProject = await Project.findById({ _id: req.params.id })
+        res.json(oneProject)
+    } catch (err) {
+        res.json({ message: err })
+    }
 })
-router.post("/", (req, res) => {
-    res.send("POSt a project is working")
+router.post("/", async (req, res) => {
+    const createdProject = new Project({
+        title: req.body.title,
+        description: req.body.description,
+        image: req.body.image,
+        github: req.body.github
+    })
+    try {
+        const savedProject = await createdProject.save()
+        res.json(savedProject)
+    } catch (err) {
+        res.json({ message: err })
+    }
+
 })
-router.delete("/", (req, res) => {
-    res.send("DELETE a project is working")
+router.delete("/:id", async (req, res) => {
+    try {
+        const deleteProject = await Project.findByIdAndDelete({ _id: req.params.id })
+        res.json(deleteProject)
+    } catch (err) {
+        res.json({ message: err })
+    }
 })
-router.patch("/", (req, res) => {
-    res.send("UPDATE a project is working")
+router.patch("/:id", async (req, res) => {
+    try {
+        const updateProject = await Project.updateOne({ _id: req.params.id }, { $set: req.body })
+        res.json(updateProject)
+    } catch (err) {
+        res.json({ message: err })
+    }
 })
 
 
